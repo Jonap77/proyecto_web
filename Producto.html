@@ -189,27 +189,25 @@ $resul = mysqli_query($conexion, $consulta);
         <td>Stock Disponible</td>
     </tr>
 </thead>
+<!-- Tabla de resultados--> 
+<!-- <tbody id="resultados"> -->
+<!-- <?php while ($mostrar = mysqli_fetch_assoc($resul)): ?> -->
 
-<tbody id="resultados">
-<?php while ($mostrar = mysqli_fetch_assoc($resul)): ?>
-
-    <tr>
-        <td><?php echo htmlspecialchars($mostrar['id_producto']); ?></td> <!-- ID Producto -->
-        <td><strong><?php echo htmlspecialchars($mostrar['nombre']); ?></strong></td> <!-- Nombre -->
-        <td><?php echo htmlspecialchars(number_format($mostrar['precio'], 2)); ?></td> <!-- Precio $ -->
-        <td><?php echo htmlspecialchars($mostrar['descripcion']); ?></td> <!-- Descripción -->
-        <td><strong><?php echo htmlspecialchars($mostrar['id_inventario']); ?></strong></td> <!-- Código de Barras -->
-        <td><?php echo htmlspecialchars($mostrar['fecha_alta']); ?></td> <!-- Fecha de Compra -->
-        <td><?php echo htmlspecialchars($mostrar['fecha_compra']); ?></td> <!-- Fecha de Alta -->
-        <td><strong><?php echo htmlspecialchars($mostrar['total_producto']); ?></strong></td> <!-- Total Producto Comprado -->
-        <td><?php echo htmlspecialchars($mostrar['cantidad_producto']); ?></td> <!-- Stock Disponible -->
-
-    </tr>
-<?php endwhile; ?>
-</tbody>
-</table>
-
-</div>
+<!--     <tr> -->
+<!--         <td><?php echo htmlspecialchars($mostrar['id_producto']); ?></td>  ID Producto --> 
+<!--         <td><strong><?php echo htmlspecialchars($mostrar['nombre']); ?></strong></td>  Nombre --> 
+<!--         <td><?php echo htmlspecialchars(number_format($mostrar['precio'], 2)); ?></td>  Precio $ --> 
+<!--         <td><?php echo htmlspecialchars($mostrar['descripcion']); ?></td>  Descripción --> 
+<!--         <td><strong><?php echo htmlspecialchars($mostrar['id_inventario']); ?></strong></td> Código de Barras --> 
+<!--         <td><?php echo htmlspecialchars($mostrar['fecha_alta']); ?></td>  Fecha de Compra --> 
+<!--         <td><?php echo htmlspecialchars($mostrar['fecha_compra']); ?></td>  Fecha de Alta --> 
+<!--         <td><strong><?php echo htmlspecialchars($mostrar['total_producto']); ?></strong></td>  Total Producto Comprado --> 
+<!--         <td><?php echo htmlspecialchars($mostrar['cantidad_producto']); ?></td>  Stock Disponible --> 
+<!--     </tr> -->
+<!-- <?php endwhile; ?> -->
+<!-- </tbody> -->
+<!-- </table> -->
+<!-- </div> Cierra contenedor tabla -->
 
 
 </body>
