@@ -1,0 +1,274 @@
+:root {
+    --oscuro: #222f3e;
+    --blanco: #ffffff; /* Blanco puro para fondo */
+    --azul: #0984e3;
+    --gris: #dfe6e9;
+    --primario: #0984e3;
+    --sombra: 0 6px 15px rgba(0, 0, 0, 0.1); /* sombras más suaves para fondo claro */
+}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+svg{
+    width: auto;
+    height: 4rem;
+    text-decoration: none;
+    color: var(--blanco);
+}
+
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
+}
+
+.header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #1e1e1e;
+    color: white;
+}
+
+.contenedor-header, .buscador {
+    flex: 1 1 50%;
+    display: flex;
+    align-items: center;
+}
+
+.buscador form {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.buscador input[type="text"] {
+    padding: 0.5rem;
+    width: 60%;
+    max-width: 300px;
+    margin-right: 0.5rem;
+}
+
+.buscador .boton_buscar {
+    padding: 0.5rem 1rem;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+.formulario-producto {
+    background-color: white;
+    margin: 2rem auto;
+    padding: 2rem;
+    max-width: 900px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+}
+
+.contenedor-input {
+    display: flex;
+    flex-direction: column;
+}
+
+.contenedor-input label {
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+}
+
+.contenedor-input input,
+.contenedor-input textarea {
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.botones {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.botones input {
+    padding: 0.6rem 1.2rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.agregar { background-color: #28a745; color: white; }
+.editar  { background-color: #ffc107; color: black; }
+.eliminar { background-color: #dc3545; color: white; }
+.cancelar { background-color: #6c757d; color: white; }
+
+table {
+    width: 95%;
+    margin: 2rem auto;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 0 12px rgba(0,0,0,0.1);
+}
+
+table thead {
+    background-color: #343a40;
+    color: white;
+}
+
+table th, table td {
+    padding: 0.8rem;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+.mostrar {
+    text-align: center;
+    margin: 1rem 0;
+}
+
+.mostrar input {
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    cursor: pointer;
+}
+
+.mostrar input:hover {
+    background-color: var(--azul);
+    color: var(--blanco);
+    transform: scale(1.1);
+}
+
+/* Tabla general */
+.contenedor_tabla {
+    display: flex;
+    justify-content: center;
+    margin: 3rem 2rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: var(--sombra);
+    overflow-x: auto;
+}
+#tabla,
+#tabla_busqueda {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    width: 90%;
+    margin-top: 2rem;
+    background-color: var(--blanco);
+    box-shadow: var(--sombra);
+    border-radius: 15px;
+    overflow: hidden;
+}
+#tabla {
+    display: table;
+}
+#tabla thead,
+#tabla_busqueda thead {
+    background-color: var(--blanco);
+    color: var(--oscuro);
+    font-size: 1.25rem;
+    text-align: center;
+    border-radius: 15px 15px 0 0;
+    letter-spacing: 0.05em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+#tabla thead th,
+#tabla_busqueda thead th {
+    padding: 1.25rem 1rem;
+    text-transform: uppercase;
+}
+#tabla tbody tr,
+#tabla_busqueda tbody tr {
+    background-color: var(--blanco);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    border-radius: 10px;
+}
+#tabla tbody tr:hover,
+#tabla_busqueda tbody tr:hover {
+    background-color: var(--gris);
+    transform: translateY(-2px);
+}
+#tabla tbody td,
+#tabla_busqueda tbody td {
+    padding: 1rem;
+    text-align: center;
+    border-bottom: none;
+    color: var(--oscuro);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+#tabla tbody td:first-child,
+#tabla_busqueda tbody td:first-child {
+    font-weight: 700;
+}
+.accion {
+    padding: 0.5rem 1.2rem;
+    background-color: var(--primario);
+    color: var(--blanco);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    box-shadow: var(--sombra);
+    transition: background-color 0.3s ease;
+}
+.accion:hover {
+    background-color: #065cb1;
+}
+
+/* Mensaje producto no encontrado */
+#message {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--blanco);
+    padding: 2.5rem;
+    border-radius: 15px;
+    font-weight: 700;
+    font-size: 1.4rem;
+    width: 32rem;
+    margin: 2rem auto;
+    box-shadow: var(--sombra);
+    color: var(--oscuro);
+}
+.mensaje svg {
+    height: 6.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Error */
+.error {
+    background-color: var(--blanco);
+    border-radius: 15px;
+    padding: 3rem 4rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #e74c3c;
+    text-align: center;
+    margin: 3rem auto;
+    width: fit-content;
+    box-shadow: 0 0 10px #e74c3c55;
+}
+
+
+
