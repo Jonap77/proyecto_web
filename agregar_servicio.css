@@ -1,0 +1,84 @@
+:root{
+    --blanco: #ffffff;
+    --oscuro: #212121;
+    --primario: #ffc107;
+    --secundario: #0097a7;
+    --gris:#757575;
+    --grisclaro: #dfe9f3;
+    --verde: #23cc0d;
+    --azul: #453ff5;
+}
+
+:root {
+    --oscuro: #385571; /* Color oscuro para el fondo del encabezado */
+    --blanco: #ffffff; /* Color blanco para el texto */
+    --primario: #3498db; /* Color primario para detalles */
+    --gris: #ecf0f1; /* Color gris para fondos */
+    --sombra: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+body{
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+}
+.servicios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
+}
+
+.servicio-card {
+    text-align: center;
+    font-size: 2rem;
+    background: #fff;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+.servicio-card:hover {
+    transform: translateY(-10px);
+}
+.servicio-card h3 {
+    margin: 0 0 0.5rem;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 2rem;
+}
+.servicio-card p{
+font-weight: bold;
+font-size: 1.5rem;
+font-family: Arial, Helvetica, sans-serif;
+}
+.servicio-card .acciones button {
+    font-size: 1.5rem;
+    margin: 0.3rem;
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.editar { background: #f0ad4e; color: white; }
+.eliminar { background: #d9534f; color: white; }
+.guardar { background: #5cb85c; color: white; }
+
+#form-editar button{
+    padding: 1rem;
+    border-radius: .5rem;
+    border: none;
+}
+.boton{
+    margin: 2rem 2rem;
+}
+
+.boton a:hover{
+    transform: scale(0,9);
+}
+.boton a{
+    padding:1rem;
+    background-color: var(--oscuro);
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: .5rem;
+}
+

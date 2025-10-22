@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preload" href="normalize.css" as="style">
+    <link rel="stylesheet" href="normalize.css"><!--aplicacion de normalize-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Krub:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="agregar_servicio.css" as ="style">
+    <title>HY Barber</title>
+</head>
+<body>
+
+<!-- Botón que abre el modal -->
+<!-- Botón para abrir el modal -->
+<button onclick="abrirModalServicio()" style="padding: 12px 25px; background-color:var(--oscuro); color: white; border: none; border-radius: 5px; cursor: pointer; 
+    position: fixed; top: 20px; right: 20px; z-index: 9999; font-size: 16px; font-weight: bold;">
+    ➕ Agregar Servicio
+</button>
+
+<!-- Fondo oscuro -->
+<div id="fondo-modal" onclick="cerrarModalServicio()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+background:rgba(0,0,0,0.6); z-index:999;"></div>
+
+<!-- Modal centrado -->
+<div id="modal-servicio" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+background:#f9f9f9; padding:2rem; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.3); z-index:1000; width:400px; max-width:90%;">
+    <h2 style="margin-top: 0; color: #333; text-align:center;">Agregar Nuevo Servicio</h2>
+    <form method="POST" action="agregar_servicio.php">
+        <label for="id_servicio" style="display:block; margin-top:1rem;">ID Servicio:</label>
+        <select name="id_servicio" required style="width:100%; padding:8px; border:1px solid #ccc; border-radius:5px;">
+            <?php
+            $conn = mysqli_connect("localhost", "root", "ulloa@123", "barberia");
+            $res = mysqli_query($conn, "SELECT id_servicio FROM servicio");
+            $usados = [];
+            while ($row = mysqli_fetch_assoc($res)) {
+                $usados[] = $row['id_servicio'];
+            }
+
+            for ($i = 500; $i <= 599; $i++) {
+                $disabled = in_array($i, $usados) ? 'disabled' : '';
+                $label = in_array($i, $usados) ? "$i (Usado)" : "$i";
+                echo "<option value='$i' $disabled>$label</option>";
+            }
+            ?>
+        </select>
+
+        <label style="display:block; margin-top:1rem;">Tipo:</label>
+        <input type="text" name="tipo" required style="width:100%; padding:8px; border:1px solid #ccc; border-radius:5px;">
+
+        <label style="display:block; margin-top:1rem;">Precio:</label>
+        <input type="number" name="precio" step="0.01" required style="width:100%; padding:8px; border:1px solid #ccc; border-radius:5px;">
+
+        <label style="display:block; margin-top:1rem;">Descripción:</label>
+        <input type="text" name="descripcion" maxlength="100" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:5px;">
+
+        <div style="text-align:right; margin-top:1.5rem;">
+            <button type="submit" style="background-color:#28a745; color:white; padding:10px 20px; border:none; border-radius:5px;">Guardar</button>
+            <button type="button" onclick="cerrarModalServicio()" style="background-color:#dc3545; color:white; padding:10px 20px; border:none; border-radius:5px; margin-left:10px;">Cancelar</button>
+        </div>
+    </form>
+</div>
+
+<!-- JavaScript para mostrar/ocultar el modal -->
+<script>
+function abrirModalServicio() {
+    document.getElementById('modal-servicio').style.display = 'block';
+    document.getElementById('fondo-modal').style.display = 'block';
+}
+function cerrarModalServicio() {
+    document.getElementById('modal-servicio').style.display = 'none';
+    document.getElementById('fondo-modal').style.display = 'none';
+}
+</script>
+
+
+<?php
+$conn = mysqli_connect("localhost", "root", "ulloa@123", "barberia");
+$servicios = mysqli_query($conn, "SELECT * FROM servicio"); // Asegúrate de que la tabla se llame así
+?>
+
+<div class="boton">
+    <a href="../Inicio/Inicio.php">Volver</a>
+</div>
+
+<div class="servicios-grid"> <!-- Contenedor de los servicios -->
+    <?php while ($servicio = mysqli_fetch_assoc($servicios)): ?>
+        <div class="servicio-card" id="servicio-<?= $servicio['id_servicio'] ?>">
+    <h3><?= htmlspecialchars($servicio['tipo']) ?></h3>
+    <p>Precio: $<?= htmlspecialchars($servicio['precio']) ?></p>
+    <p><?= htmlspecialchars($servicio['descripcion']) ?></p>
+    <div class="acciones">
+    <button class="editar" onclick="mostrarEditar(<?= $servicio['id_servicio'] ?>)">Editar</button>
+
+    </div>
+   
+</div>
+
+    <?php endwhile; ?>
+</div>
+
+
+<!-- Modal para editar (más grande) -->
+<div id="modal-editar" style="display:none; position:fixed; top:10%; left:50%; transform:translateX(-50%);
+ width: 500px; background:white; padding:2rem; border-radius:10px; box-shadow:0 0 20px rgba(0,0,0,0.3); z-index:1000;">
+    <h2 style="margin-top:0;">Editar Servicio</h2>
+        <form id="form-editar" method="POST" action="editar_servicio.php">
+            <input type="hidden" name="id_servicio" id="edit-id">
+            <label>Tipo:</label><br>
+            <input type="text" name="tipo" id="edit-tipo" style="width:100%;" required><br><br>
+            <label>Precio:</label><br>
+            <input type="number" name="precio" id="edit-precio" style="width:100%;" required><br><br>
+            <label>Descripción:</label><br>
+            <textarea name="descripcion" id="edit-descripcion" style="width:100%;" rows="4" required></textarea><br><br>
+            <button class="guardar" type="submit">Guardar</button>
+            <button type="button" onclick="cerrarEditar()">Cancelar</button>
+        </form>
+</div>
+
+<!-- Modal de confirmación para eliminar -->
+<div id="modal-eliminar" style="display:none; position:fixed; top:30%; left:50%; transform:translateX(-50%); width:400px; background:white; padding:2rem; border-radius:12px; box-shadow:0 0 20px rgba(0,0,0,0.2); z-index:1000; text-align:center;">
+    <h3 style="font-family: 'Arial', sans-serif; color: #333;">¿Estás seguro de eliminar este servicio?</h3>
+    <form id="form-eliminar" onsubmit="return confirmarEliminar()">
+        <input type="hidden" name="id_servicio" id="delete-id">
+        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 20px;">
+            <button type="submit" style="background-color:#dc3545; color:white; padding: 12px 25px; font-size: 16px; border:none; border-radius:6px; cursor:pointer; transition: background-color 0.3s;">Sí, eliminar</button>
+            <button type="button" onclick="cerrarEliminar()" style="background-color:#6c757d; color:white; padding: 12px 25px; font-size: 16px; border:none; border-radius:6px; cursor:pointer; transition: background-color 0.3s;">Cancelar</button>
+        </div>
+    </form>
+</div>
+
+<script> //editar servicios
+function mostrarEditar(id) {
+    // Rellenar con datos (puedes usar AJAX, o pasarlos directamente en HTML como atributos)
+    const card = document.getElementById(`servicio-${id}`);
+    document.getElementById('edit-id').value = id;
+    document.getElementById('edit-tipo').value = card.querySelector('h3').innerText;
+    document.getElementById('edit-precio').value = card.querySelector('p').innerText.match(/\d+/)[0];
+    document.getElementById('edit-descripcion').value = card.querySelectorAll('p')[1].innerText;
+    document.getElementById('modal-editar').style.display = 'block';
+}
+function cerrarEditar() {
+    document.getElementById('modal-editar').style.display = 'none';
+}
+function confirmarEliminar(id) {
+    document.getElementById('delete-id').value = id;
+    document.getElementById('modal-eliminar').style.display = 'block';
+}
+function cerrarEliminar() {
+    document.getElementById('modal-eliminar').style.display = 'none';
+}
+</script>
+
+
+
+
+
+<script> // Eliminar servicio
+let idAEliminar = null;
+
+function mostrarEliminar(id) {
+    idAEliminar = id;
+    document.getElementById("delete-id").value = id;
+    document.getElementById("modal-eliminar").style.display = "block";
+}
+
+function cerrarEliminar() {
+    document.getElementById("modal-eliminar").style.display = "none";
+    idAEliminar = null;
+}
+
+function confirmarEliminar() {
+    const formData = new FormData();
+    formData.append("id_servicio", idAEliminar);
+
+    fetch("eliminar_servicio.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.text())
+    .then(data => {
+        if (data.trim() === "success") {
+            const card = document.getElementById(`servicio-${idAEliminar}`);
+            if (card) card.remove();
+        } else {
+            alert("❌ Error al eliminar el servicio.");
+        }
+        cerrarEliminar();
+    })
+    .catch(() => {
+        alert("❌ Error de conexión.");
+        cerrarEliminar();
+    });
+
+    return false;
+}
+
+</script>
+
+
+</body>
+</html>
+
+<?php // agregar servicio nuevo
+$conn = mysqli_connect("localhost", "root", "ulloa@123", "barberia");
+
+// Verificar conexión
+if (!$conn) {
+    die("Error de conexión: " . mysqli_connect_error());
+}
+
+// Verifica si se envió el formulario
+if (isset($_POST["id_servicio"], $_POST["tipo"], $_POST["precio"], $_POST["descripcion"])) {
+    $id_servicio = intval($_POST["id_servicio"]);
+    $tipo = mysqli_real_escape_string($conn, $_POST["tipo"]);
+    $precio = floatval($_POST["precio"]);
+    $descripcion = mysqli_real_escape_string($conn, $_POST["descripcion"]);
+
+    // Verificar si el ID ya está en uso
+    $check = mysqli_query($conn, "SELECT * FROM servicio WHERE id_servicio = $id_servicio");
+    if (mysqli_num_rows($check) > 0) {
+        echo "<script>alert('⚠️ ID de servicio ya en uso.'); window.location.href='tuservicios.php';</script>";
+        exit;
+    }
+
+    // Insertar nuevo servicio
+    $query = "INSERT INTO servicio (id_servicio, tipo, precio, descripcion) 
+              VALUES ($id_servicio, '$tipo', $precio, '$descripcion')";
+
+    if (mysqli_query($conn, $query)) {
+        echo "<script>alert('✅ Servicio agregado correctamente.'); window.location.href='agregar_servicio.php';</script>";
+    } else {
+        echo "❌ Error al agregar el servicio: " . mysqli_error($conn);
+    }
+} 
+
+mysqli_close($conn);
+?>
+
+
