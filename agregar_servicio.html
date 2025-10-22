@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preload" href="normalize.css" as="style">
-    <link rel="stylesheet" href="normalize.css"><!--aplicacion de normalize-->
+    <link rel="stylesheet" href="normalize.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Krub:wght@400;700&display=swap" rel="stylesheet">
@@ -13,18 +13,14 @@
 </head>
 <body>
 
-<!-- Botón que abre el modal -->
-<!-- Botón para abrir el modal -->
 <button onclick="abrirModalServicio()" style="padding: 12px 25px; background-color:var(--oscuro); color: white; border: none; border-radius: 5px; cursor: pointer; 
     position: fixed; top: 20px; right: 20px; z-index: 9999; font-size: 16px; font-weight: bold;">
     ➕ Agregar Servicio
 </button>
 
-<!-- Fondo oscuro -->
 <div id="fondo-modal" onclick="cerrarModalServicio()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
 background:rgba(0,0,0,0.6); z-index:999;"></div>
 
-<!-- Modal centrado -->
 <div id="modal-servicio" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
 background:#f9f9f9; padding:2rem; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.3); z-index:1000; width:400px; max-width:90%;">
     <h2 style="margin-top: 0; color: #333; text-align:center;">Agregar Nuevo Servicio</h2>
@@ -63,48 +59,33 @@ background:#f9f9f9; padding:2rem; border-radius:12px; box-shadow:0 10px 30px rgb
     </form>
 </div>
 
-<!-- JavaScript para mostrar/ocultar el modal -->
-<script>
-function abrirModalServicio() {
-    document.getElementById('modal-servicio').style.display = 'block';
-    document.getElementById('fondo-modal').style.display = 'block';
-}
-function cerrarModalServicio() {
-    document.getElementById('modal-servicio').style.display = 'none';
-    document.getElementById('fondo-modal').style.display = 'none';
-}
-</script>
-
-
 <?php
 $conn = mysqli_connect("localhost", "root", "ulloa@123", "barberia");
-$servicios = mysqli_query($conn, "SELECT * FROM servicio"); // Asegúrate de que la tabla se llame así
+$servicios = mysqli_query($conn, "SELECT * FROM servicio");
 ?>
 
 <div class="boton">
     <a href="index.html">Volver</a>
 </div>
 
-<div class="servicios-grid"> <!-- Contenedor de los servicios -->
-    <?php while ($servicio = mysqli_fetch_assoc($servicios)): ?>
+<div class="servicios-grid"> <?php while ($servicio = mysqli_fetch_assoc($servicios)): ?>
         <div class="servicio-card" id="servicio-<?= $servicio['id_servicio'] ?>">
     <h3><?= htmlspecialchars($servicio['tipo']) ?></h3>
     <p>Precio: $<?= htmlspecialchars($servicio['precio']) ?></p>
     <p><?= htmlspecialchars($servicio['descripcion']) ?></p>
     <div class="acciones">
     <button class="editar" onclick="mostrarEditar(<?= $servicio['id_servicio'] ?>)">Editar</button>
+    <button class="eliminar" onclick="mostrarEliminar(<?= $servicio['id_servicio'] ?>)">Eliminar</button>
 
     </div>
-   
+    
 </div>
 
     <?php endwhile; ?>
 </div>
 
-
-<!-- Modal para editar (más grande) -->
 <div id="modal-editar" style="display:none; position:fixed; top:10%; left:50%; transform:translateX(-50%);
- width: 500px; background:white; padding:2rem; border-radius:10px; box-shadow:0 0 20px rgba(0,0,0,0.3); z-index:1000;">
+    width: 500px; background:white; padding:2rem; border-radius:10px; box-shadow:0 0 20px rgba(0,0,0,0.3); z-index:1000;">
     <h2 style="margin-top:0;">Editar Servicio</h2>
         <form id="form-editar" method="POST" action="editar_servicio.php">
             <input type="hidden" name="id_servicio" id="edit-id">
@@ -119,7 +100,6 @@ $servicios = mysqli_query($conn, "SELECT * FROM servicio"); // Asegúrate de que
         </form>
 </div>
 
-<!-- Modal de confirmación para eliminar -->
 <div id="modal-eliminar" style="display:none; position:fixed; top:30%; left:50%; transform:translateX(-50%); width:400px; background:white; padding:2rem; border-radius:12px; box-shadow:0 0 20px rgba(0,0,0,0.2); z-index:1000; text-align:center;">
     <h3 style="font-family: 'Arial', sans-serif; color: #333;">¿Estás seguro de eliminar este servicio?</h3>
     <form id="form-eliminar" onsubmit="return confirmarEliminar()">
@@ -131,79 +111,12 @@ $servicios = mysqli_query($conn, "SELECT * FROM servicio"); // Asegúrate de que
     </form>
 </div>
 
-<script> //editar servicios
-function mostrarEditar(id) {
-    // Rellenar con datos (puedes usar AJAX, o pasarlos directamente en HTML como atributos)
-    const card = document.getElementById(`servicio-${id}`);
-    document.getElementById('edit-id').value = id;
-    document.getElementById('edit-tipo').value = card.querySelector('h3').innerText;
-    document.getElementById('edit-precio').value = card.querySelector('p').innerText.match(/\d+/)[0];
-    document.getElementById('edit-descripcion').value = card.querySelectorAll('p')[1].innerText;
-    document.getElementById('modal-editar').style.display = 'block';
-}
-function cerrarEditar() {
-    document.getElementById('modal-editar').style.display = 'none';
-}
-function confirmarEliminar(id) {
-    document.getElementById('delete-id').value = id;
-    document.getElementById('modal-eliminar').style.display = 'block';
-}
-function cerrarEliminar() {
-    document.getElementById('modal-eliminar').style.display = 'none';
-}
-</script>
-
-
-
-
-
-<script> // Eliminar servicio
-let idAEliminar = null;
-
-function mostrarEliminar(id) {
-    idAEliminar = id;
-    document.getElementById("delete-id").value = id;
-    document.getElementById("modal-eliminar").style.display = "block";
-}
-
-function cerrarEliminar() {
-    document.getElementById("modal-eliminar").style.display = "none";
-    idAEliminar = null;
-}
-
-function confirmarEliminar() {
-    const formData = new FormData();
-    formData.append("id_servicio", idAEliminar);
-
-    fetch("eliminar_servicio.php", {
-        method: "POST",
-        body: formData
-    })
-    .then(res => res.text())
-    .then(data => {
-        if (data.trim() === "success") {
-            const card = document.getElementById(`servicio-${idAEliminar}`);
-            if (card) card.remove();
-        } else {
-            alert("❌ Error al eliminar el servicio.");
-        }
-        cerrarEliminar();
-    })
-    .catch(() => {
-        alert("❌ Error de conexión.");
-        cerrarEliminar();
-    });
-
-    return false;
-}
-
-</script>
-
+<script src="scripts.js"></script>
 
 </body>
 </html>
 
-<?php // agregar servicio nuevo
+<?php // Bloque PHP para agregar servicio (mantener al final del archivo si debe ejecutarse después del HTML)
 $conn = mysqli_connect("localhost", "root", "ulloa@123", "barberia");
 
 // Verificar conexión
@@ -221,7 +134,8 @@ if (isset($_POST["id_servicio"], $_POST["tipo"], $_POST["precio"], $_POST["descr
     // Verificar si el ID ya está en uso
     $check = mysqli_query($conn, "SELECT * FROM servicio WHERE id_servicio = $id_servicio");
     if (mysqli_num_rows($check) > 0) {
-        echo "<script>alert('⚠️ ID de servicio ya en uso.'); window.location.href='tuservicios.php';</script>";
+        // Redirigir al archivo correcto (asumiendo que este archivo se llama agregar_servicio.php o similar)
+        echo "<script>alert('⚠️ ID de servicio ya en uso.'); window.location.href='agregar_servicio.php';</script>";
         exit;
     }
 
@@ -238,5 +152,4 @@ if (isset($_POST["id_servicio"], $_POST["tipo"], $_POST["precio"], $_POST["descr
 
 mysqli_close($conn);
 ?>
-
 
