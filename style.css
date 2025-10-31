@@ -1,0 +1,618 @@
+/* style.css (REEMPLAZA Y AÑADE ESTO AL FINAL) */
+
+/* === MEJORAS GENERALES === */
+
+body.admin-body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, 
+                 "Helvetica Neue", Arial, sans-serif;
+}
+
+.admin-header {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.admin-header h1 {
+    color: #1a3b5d;
+}
+
+/* === MEJORAS DE FORMULARIO (Campos de Texto Profesionales) === */
+
+.form-card label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    display: block; /* Asegura que la etiqueta esté sobre el campo */
+}
+
+.form-card input[type="text"],
+.form-card input[type="number"],
+.form-card textarea {
+    /* --- Apariencia --- */
+    width: 100%;
+    padding: 12px 15px; /* Padding interno para que el texto no se pegue */
+    border: 1px solid #dcdcdc; /* Borde sutil */
+    border-radius: 8px; /* Esquinas redondeadas (puedes usar 50px si los quieres tipo 'píldora' también) */
+    background-color: #fdfdfd; /* Fondo ligeramente blanco */
+    font-size: 1rem;
+    color: #333;
+    
+    /* --- Transición --- */
+    transition: all 0.3s ease;
+    
+    /* --- Reset --- */
+    box-sizing: border-box; /* Asegura que el padding no rompa el ancho */
+    -webkit-appearance: none; /* Quita estilos por defecto de iOS */
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* --- Efecto 'Focus' (al hacer clic) --- */
+.form-card input[type="text"]:focus,
+.form-card input[type="number"]:focus,
+.form-card textarea:focus {
+    outline: none; /* Quita el borde por defecto del navegador */
+    border-color: #007bff; /* Borde azul a juego con los botones */
+    
+    /* Sombra suave y profesional */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+    background-color: #fff;
+}
+
+/* --- Estilos específicos para Textarea --- */
+.form-card textarea {
+    min-height: 120px; /* Un buen alto inicial */
+    resize: vertical; /* Permite al usuario redimensionar solo verticalmente */
+    font-family: inherit; /* Asegura que use la misma fuente */
+}
+
+/* --- Placeholder (texto de ejemplo) --- */
+.form-card input::placeholder,
+.form-card textarea::placeholder {
+    color: #aaa;
+    opacity: 1; /* Firefox necesita esto */
+}
+
+/* === MEJORA DE BOTONES (Redondos y Suaves) === */
+
+/* Estilo base para todos los botones */
+.btn {
+    display: inline-block;
+    padding: 10px 20px; /* Más padding horizontal para forma de píldora */
+    border-radius: 50px; /* Esto los hace redondos */
+    border: none;
+    font-weight: 600; /* Un peso semi-bold */
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    
+    /* Sombra suave para un efecto "flotante" */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    
+    /* Transición suave para todos los efectos */
+    transition: all 0.3s ease;
+}
+
+/* Efecto hover general */
+.btn:hover {
+    transform: translateY(-3px); /* Se levanta un poco más */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
+}
+
+/* Efecto "presionado" */
+.btn:active {
+    transform: translateY(1px); /* Se hunde */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Colores suaves y profesionales */
+.btn-create,
+.btn-update {
+    background-color: #007bff;
+    color: white;
+}
+.btn-create:hover,
+.btn-update:hover {
+    background-color: #0069d9;
+}
+
+.btn-edit {
+    background-color: #f0f4f7;
+    color: #333;
+    border: 1px solid #ddd; /* Un borde sutil para botones claros */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Sombra más ligera */
+}
+.btn-edit:hover {
+    background-color: #e9ecef;
+    border-color: #ccc;
+}
+
+.btn-delete {
+    background-color: #dc3545;
+    color: white;
+}
+.btn-delete:hover {
+    background-color: #c82333;
+}
+
+.btn-cancel {
+    background-color: #6c757d;
+    color: white;
+}
+.btn-cancel:hover {
+    background-color: #5a6268;
+}
+
+/* Botón de cancelar en el formulario */
+.form-card .btn-cancel {
+    margin-left: 10px;
+}
+
+
+/* === ESTILOS ACTUALIZADOS PARA TARJETAS DE PRODUCTO (Contenedores Flotantes) === */
+
+#product-grid-admin {
+    display: grid;
+    /* Crea columnas que se ajustan automáticamente */
+    /* -- Reemplázala por esta -- */
+grid-template-columns: repeat(auto-fit, minmax(200px, 250px)); 
+    gap: 25px; /* Espacio entre las tarjetas */
+    padding: 15px; /* Espacio alrededor de la cuadrícula */
+    background-color: rgba(255, 255, 255, 0.8); /* Fondo semi-transparente para el contenedor de la cuadrícula */
+    border-radius: 10px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05); /* Sombra interna sutil */
+}
+
+.product-card-admin {
+    background-color: #fdfdfd;
+    border: 1px solid #e0e0e0; /* Borde más definido */
+    border-radius: 12px; /* Esquinas más suaves */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    cursor: pointer; /* Indica que la tarjeta es interactiva */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    /* Añadido: asegurar que el texto se vea bien */
+    text-align: left;
+    color: #333;
+}
+
+.product-card-admin:hover {
+    transform: translateY(-8px) scale(1.02); /* Efecto de levantarse más y agrandarse un poco */
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.product-card-admin img {
+    width: 100%;
+    /* IMAGEN MÁS PEQUEÑA */
+    height: 140px; 
+    object-fit: cover;
+    border-bottom: 1px solid #f0f0f0;
+    transition: transform 0.3s ease; /* Transición para el zoom de la imagen */
+}
+
+.product-card-admin:hover img {
+    transform: scale(1.05); /* Ligerísimo zoom en la imagen al pasar el ratón */
+}
+
+.product-card-admin h3 {
+    font-size: 1.2rem;
+    margin: 15px 15px 8px; /* Más espaciado */
+    line-height: 1.3;
+    color: #1a3b5d; /* Color más oscuro para el título */
+}
+
+.product-card-admin .description {
+    font-size: 0.85rem; /* Descripción un poco más pequeña */
+    color: #777;
+    margin: 0 15px 12px;
+    flex-grow: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limitar a 3 líneas */
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.product-card-admin .price {
+    font-size: 1.4rem; /* Precio un poco más grande */
+    font-weight: bold;
+    color: #007bff; /* Un azul más destacado para el precio */
+    margin: 0 15px 15px;
+    text-align: right; /* Precio alineado a la derecha */
+}
+
+/* === Distribución Profesional de Botones en Tarjeta === */
+
+.admin-actions {
+    background-color: #fdfdfd;
+    border-top: 1px solid #f0f0f0;
+    padding: 15px; /* Más espacio */
+    display: flex;
+    justify-content: space-between; /* Botones en extremos opuestos */
+    align-items: center;
+    gap: 10px;
+}
+
+/* * Hacer que el botón de eliminar sea menos prominente.
+ * Esto es bueno para UX, evita clics accidentales.
+*/
+.admin-actions .btn-delete {
+    background-color: transparent;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+    box-shadow: none;
+}
+
+/* Al pasar el ratón, se rellena */
+.admin-actions .btn-delete:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Hacer que el botón de editar sea el principal */
+.admin-actions .btn-edit {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+}
+.admin-actions .btn-edit:hover {
+    background-color: #0069d9;
+    border: none;
+}
+/* Animación para filas eliminadas */
+.product-card-admin.removing {
+    opacity: 0;
+    transition: all 0.5s ease;
+    transform: scale(0.8) translateY(20px); /* Sale con un encogimiento y desplazamiento */
+    filter: blur(5px); /* Efecto de desenfoque al salir */
+}
+
+/* Mensajes de estado (sin cambios) */
+#status-message {
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Responsive adjustments */
+/* style.css (BUSCA Y REEMPLAZA ESTA REGLA) */
+
+.admin-main {
+    /* (CAMBIO) Reducimos el ancho máximo para que no ocupe toda la pantalla */
+    max-width: 1200px; 
+    
+    /* El 'margin: 30px auto' se encarga de centrarlo */
+    margin: 30px auto; 
+    
+    padding: 20px;
+    display: grid;
+    /* (CAMBIO) Ajustamos la proporción del grid a algo más equilibrado */
+    grid-template-columns: 1fr 1.5fr; 
+    gap: 30px;
+}
+
+/* (SIN CAMBIOS) Esto es para la vista en móvil, déjalo como está */
+@media (max-width: 768px) {
+    .admin-main {
+        grid-template-columns: 1fr; /* Una sola columna para móviles */
+        gap: 20px;
+        padding: 10px;
+        margin-top: 15px; /* Menos margen en móvil */
+    }
+}
+    #product-grid-admin {
+        padding: 10px;
+        gap: 15px;
+    }
+
+    .admin-header {
+        padding: 15px 20px;
+    }
+
+    /* === (NUEVO) Estilos del Buscador === */
+.search-container {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.search-container #search-form {
+    display: flex;
+    width: 100%;
+}
+
+.search-container #search-input {
+    flex-grow: 1; /* Ocupa todo el espacio disponible */
+    padding: 12px 15px;
+    border: 1px solid #dcdcdc;
+    border-radius: 50px 0 0 50px; /* Redondeado a la izquierda */
+    font-size: 1rem;
+    background-color: #fdfdfd;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0; /* Quitar márgenes */
+}
+
+.search-container #search-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+    background-color: #fff;
+}
+
+.search-container .btn-search {
+    border-radius: 0 50px 50px 0; /* Redondeado a la derecha */
+    border: 1px solid #007bff;
+    background-color: #007bff;
+    color: white;
+    padding: 0 20px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    margin: 0; /* Quitar márgenes */
+}
+.search-container .btn-search:hover {
+    background-color: #0069d9;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Mensaje de estado de búsqueda */
+#search-status {
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+/* === (NUEVO) Estilos del Modal (Ventana Flotante) === */
+
+.modal-backdrop {
+    position: fixed; /* Ocupa toda la pantalla */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Fondo oscuro semitransparente */
+    z-index: 1000;
+    display: none; /* Oculto por defecto */
+    justify-content: center;
+    align-items: center;
+    opacity: 0; /* Para animación */
+    transition: opacity 0.3s ease;
+}
+
+.modal-backdrop.visible {
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 700px; /* Ancho máximo */
+    overflow: hidden; /* Para que la imagen no rompa el border-radius */
+    position: relative;
+    
+    /* Animación de entrada */
+    transform: scale(0.9);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); /* Efecto "rebote" */
+}
+
+.modal-content.visible {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 2.5rem;
+    color: #aaa;
+    cursor: pointer;
+    line-height: 1;
+    z-index: 1010;
+    transition: color 0.2s ease;
+}
+.modal-close:hover {
+    color: #333;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column; /* Apilado en móvil */
+}
+
+.modal-image-container {
+    width: 100%;
+    height: 250px; /* Altura fija para la imagen */
+    background-color: #f4f4f4;
+}
+
+.modal-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Asegura que la imagen cubra el espacio */
+}
+
+.modal-details {
+    padding: 25px 30px 30px 30px;
+    color: #333;
+}
+
+.modal-details h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a3b5d;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.modal-details p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 25px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+}
+
+#modal-id {
+    font-size: 0.9rem;
+    color: #888;
+    background-color: #f5f5f5;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+#modal-price {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #007bff;
+}
+
+/* --- Responsive para el Modal --- */
+@media (min-width: 600px) {
+    .modal-body {
+        flex-direction: row; /* Lado a lado en pantallas más grandes */
+    }
+    
+    .modal-image-container {
+        width: 40%; /* Imagen ocupa 40% */
+        height: auto; /* Altura automática */
+    }
+    
+    .modal-details {
+        width: 60%; /* Detalles ocupan 60% */
+        padding: 30px 35px;
+    }
+
+    .modal-image-container img {
+        border-right: 1px solid #eee;
+    }
+}
+
+/* === (REEMPLAZO) Estilos para el Modal de Resultados de Búsqueda === */
+
+.modal-search-title {
+    padding: 20px 25px;
+    margin: 0;
+    border-bottom: 1px solid #eee;
+    color: #1a3b5d;
+}
+
+.modal-results-list {
+    padding: 10px 25px 25px 25px;
+    max-height: 400px;
+    overflow-y: auto; /* Añade scroll si hay muchos resultados */
+}
+
+/* --- INICIA EL ARREGLO (GRID LAYOUT) --- */
+.results-table {
+    width: 100%;
+    /* Usamos CSS Grid en lugar de 'table' layout */
+    display: grid;
+    
+    /* Tres columnas: Nombre (flexible), Precio (auto), Origen (auto) */
+    /* Ajusta '2fr' si necesitas más o menos espacio para el nombre */
+    grid-template-columns: 2fr 1fr 1fr; 
+    
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    gap: 5px 10px; /* Espacio entre filas y columnas */
+}
+
+/* * 'display: contents' hace que thead, tbody y tr 
+ * "desaparezcan" y sus hijos (th, td) se vuelvan
+ * hijos directos del grid. ¡Esto es clave!
+*/
+.results-table thead,
+.results-table tbody,
+.results-table tr {
+    display: contents;
+}
+
+.results-table th {
+    font-weight: 600;
+    color: #555;
+    padding: 12px 10px;
+    text-align: left;
+    /* Borde inferior para la fila de cabecera */
+    border-bottom: 2px solid #ddd; 
+}
+
+.results-table td {
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+    
+    /* Asegura que el contenido se alinee verticalmente */
+    display: flex;
+    align-items: center;
+}
+
+/* Alinear precio a la derecha */
+.results-table th:nth-child(2),
+.results-table td:nth-child(2) {
+    text-align: right;
+    justify-content: flex-end; /* Para alinear el flex-item */
+}
+
+/* Alinear origen al centro */
+.results-table th:nth-child(3),
+.results-table td:nth-child(3) {
+    text-align: center;
+    justify-content: center; /* Para alinear el flex-item */
+}
+/* --- TERMINA EL ARREGLO (GRID LAYOUT) --- */
+
+
+/* Etiqueta para la sucursal (sin cambios) */
+.source-tag {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 50px;
+    text-transform: capitalize;
+    color: #fff;
+}
+
+/* (CORRECCIÓN) Aseguramos que los nombres coincidan con la API */
+.source-tienda {
+    background-color: #007bff; /* Azul para la principal */
+}
+
+.source-tienda_sucursal_b {
+    background-color: #28a745; /* Verde para la sucursal B */
+}
