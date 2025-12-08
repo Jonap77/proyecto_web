@@ -1,10 +1,32 @@
 <?php
+// admin.php
+
+// (NUEVO) Iniciar la sesión
+session_start();
+
+// (NUEVO) Verificar si el usuario está logueado
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['products_table_name'])) {
+    // Si no está logueado, redirigir al login
+    header('Location: login.php');
+    exit;
+}
+
 /* ==============================================
    BLOQUE DE VISTA (MANEJO DE GET)
    ============================================== */
 
-// (CAMBIO) Incluimos la conexión ÚNICA Y SIMPLE
+// (NUEVO) Incluimos la conexión e iniciamos la conexión
 include_once 'db_connect.php'; 
+
+// (NUEVO) Obtener la tabla de productos asignada al usuario
+$products_table = $_SESSION['products_table_name'];
+
+// (NUEVO) Conectar a la base de datos principal (donde están ambas tablas)
+$dbconn = connect_main_db(); 
+
+if (!$dbconn) {
+    die("Error: No se pudo conectar a la base de datos.");
+}
 
 $is_editing = false;
 $product_to_edit = null;
@@ -12,8 +34,8 @@ $product_to_edit = null;
 // (U) Comprobar si estamos en modo "Editar" (vía URL)
 if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
     $id = $_GET['id'];
-    // Esta consulta busca solo en la tabla 'products' principal
-    $query = "SELECT * FROM products WHERE id = $1"; 
+    // (CAMBIO CLAVE) La consulta usa la tabla del usuario logueado
+    $query = "SELECT * FROM {$products_table} WHERE id = $1"; 
     pg_prepare($dbconn, "get_product", $query);
     $result = pg_execute($dbconn, "get_product", array($id));
     
@@ -24,13 +46,12 @@ if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
 }
 
 // (R) LEER: Obtener todos los productos para la cuadrícula de admin
-// (IMPORTANTE) Esto solo muestra productos de la tabla 'products' principal,
-// lo cual es correcto, ya que solo esos puedes editar/eliminar.
-$query_all = "SELECT id, name, price, description, image_url FROM products ORDER BY id ASC";
+// (CAMBIO CLAVE) La consulta usa la tabla del usuario logueado
+$query_all = "SELECT id, name, price, description, image_url FROM {$products_table} ORDER BY id ASC";
 $result_all = pg_query($dbconn, $query_all);
 
-// El resto de tu HTML (<body>, <header>, <main>, etc.) no cambia.
-// El modal con el 'span id="modal-source"' TAMPOCO cambia.
+// --- Cierre de conexión al final del archivo ---
+// pg_close($dbconn); 
 ?>
 
 <!DOCTYPE html>
@@ -44,7 +65,8 @@ $result_all = pg_query($dbconn, $query_all);
 <body class="admin-body">
 
     <header class="admin-header">
-        <h1>🛒 Gestionar Mi Tienda</h1>
+        <h1>🛒 Gestionar Mi Tienda (Tabla: <?php echo htmlspecialchars($products_table); ?>)</h1>
+        <a href="logout.php" class="btn btn-delete" style="float: right; margin-top: -40px;">Cerrar Sesión</a>
     </header>
 
     <main class="admin-main">
@@ -85,25 +107,21 @@ $result_all = pg_query($dbconn, $query_all);
                 <?php endif; ?>
             </form>
         </div>
-
         <div class="admin-card list-card">
             <h2>Artículos Publicados</h2>
 
-<div class="search-container">
-    <form id="search-form">
-        <input type="text" id="search-input" name="query" placeholder="Buscar por nombre...">
-        <button type="submit" class="btn btn-search">🔍</button>
-    </form>
-</div>
-
-<div id="search-status" style="display: none;"></div>
+            <div class="search-container">
+                <form id="search-form">
+                    <input type="text" id="search-input" name="query" placeholder="Buscar por nombre...">
+                    <button type="submit" class="btn btn-search">🔍</button>
+                </form>
+            </div>
+            <div id="search-status" style="display: none;"></div>
             <div id="status-message" style="display: none;"></div>
-
             <div id="product-grid-admin">
                 <?php
                 if (pg_num_rows($result_all) > 0):
                     while ($product = pg_fetch_assoc($result_all)):
-                        // Usar una imagen placeholder si la URL está vacía
                         $image_url = !empty($product['image_url']) ? htmlspecialchars($product['image_url']) : 'https://via.placeholder.com/200?text=Sin+Imagen';
                 ?>
                 
@@ -124,18 +142,18 @@ $result_all = pg_query($dbconn, $query_all);
                 <?php
                     endwhile;
                 else:
-                    echo "<p>Aún no has publicado ningún artículo.</p>";
+                    echo "<p>Aún no has publicado ningún artículo en esta sucursal ({$products_table}).</p>";
                 endif;
                 ?>
             </div> </div>
     </main>
     
     <?php
+    // Cerramos la conexión
     pg_close($dbconn);
     ?>
 
-    
-<div id="product-modal-backdrop" class="modal-backdrop">
+    <div id="product-modal-backdrop" class="modal-backdrop">
    <div id="product-modal" class="modal-content">
     <span id="modal-close-btn" class="modal-close">&times;</span>
     
@@ -152,7 +170,6 @@ $result_all = pg_query($dbconn, $query_all);
         </div>
     </div>
 </div>
-
-<script src="admin.js"></script>
+    <script src="admin.js"></script>
 </body>
 </html>
