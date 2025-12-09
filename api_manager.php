@@ -1,116 +1,113 @@
 <?php
 // api_manager.php
-// Este archivo SÓLO maneja la lógica y devuelve JSON.
-
-// (NUEVO) Iniciar sesión para obtener la clave de acceso
 session_start();
-
-// (NUEVO) Incluimos la conexión y la función de conexión
 include_once 'db_connect.php'; 
 
-// Función para enviar una respuesta JSON estándar y salir
 function send_json_response($status, $message, $data = []) {
     header('Content-Type: application/json');
     echo json_encode(['status' => $status, 'message' => $message, 'data' => $data]);
     exit;
 }
 
-// (NUEVO) Conectar a la base de datos principal
-// (NUEVO) Conectar a la base de datos principal
 $dbconn = connect_main_db(); 
 
 if (!$dbconn) {
-    // CAMBIO TEMPORAL: Muestra el error exacto de PostgreSQL (si está disponible)
-    $pg_error = pg_last_error();
-    if ($pg_error) {
-         send_json_response('error', 'Error de conexión (PostgreSQL): ' . $pg_error);
-    } else {
-        send_json_response('error', 'Error de conexión a la base de datos.');
-    }
+    send_json_response('error', 'Error de conexión BD.');
 }
 
-// Asegurarse de que se envió una acción
 if (!isset($_POST['action'])) {
     send_json_response('error', 'Acción no especificada.');
 }
 
 $action = $_POST['action'];
-
-// (NUEVO) Lógica para proteger el CRUD
-$products_table = null;
-if (isset($_SESSION['products_table_name'])) {
-    $products_table = $_SESSION['products_table_name'];
-}
+// Obtenemos la tabla vinculada a la sesión actual
+$products_table = isset($_SESSION['products_table_name']) ? $_SESSION['products_table_name'] : null;
 
 try {
     switch ($action) {
         
-        // (C) CREAR, (U) ACTUALIZAR, (D) ELIMINAR
-        case 'create':
-        case 'update':
-        case 'delete':
-            // (NUEVO) Bloquear acceso si no hay sesión
-            if (!$products_table) {
-                 send_json_response('error', 'Acceso denegado. Por favor, inicie sesión.');
-            }
+        // --- LOGICA DE COMPRA (NUEVO) ---
+        case 'checkout':
+            if (!$products_table) send_json_response('error', 'Sesión inválida.');
             
-            if ($action === 'create') {
-                // (CAMBIO CLAVE) Usar la tabla de productos del usuario
-                $query = "INSERT INTO {$products_table} (name, description, price, image_url) VALUES ($1, $2, $3, $4) RETURNING id";
-                pg_prepare($dbconn, "create_product", $query);
-                $result = pg_execute($dbconn, "create_product", [
-                    $_POST['name'], $_POST['description'], $_POST['price'], $_POST['image_url']
-                ]);
-                $new_product = pg_fetch_assoc($result);
-                send_json_response('success', 'Producto creado exitosamente.', ['new_id' => $new_product['id']]);
-                
-            } elseif ($action === 'update') {
-                // (CAMBIO CLAVE) Usar la tabla de productos del usuario
-                $query = "UPDATE {$products_table} SET name = $1, description = $2, price = $3, image_url = $4 WHERE id = $5";
-                pg_prepare($dbconn, "update_product", $query);
-                pg_execute($dbconn, "update_product", [
-                    $_POST['name'], $_POST['description'], $_POST['price'], $_POST['image_url'], $_POST['id']
-                ]);
-                send_json_response('success', 'Producto actualizado exitosamente.', ['updated_id' => $_POST['id']]);
-                
-            } elseif ($action === 'delete') {
-                // (CAMBIO CLAVE) Usar la tabla de productos del usuario
-                $query = "DELETE FROM {$products_table} WHERE id = $1";
-                pg_prepare($dbconn, "delete_product", $query);
-                pg_execute($dbconn, "delete_product", [$_POST['id']]);
-                send_json_response('success', 'Producto eliminado exitosamente.', ['deleted_id' => $_POST['id']]);
+            // Recibimos el carrito como JSON string y lo convertimos
+            $cart_items = json_decode($_POST['cart_data'], true);
+
+            if (empty($cart_items)) {
+                send_json_response('error', 'Carrito vacío.');
             }
+
+            // Iniciar Transacción (Todo o nada)
+            pg_query($dbconn, "BEGIN");
+
+            foreach ($cart_items as $item) {
+                $id = intval($item['id']);
+                $qty_to_buy = intval($item['qty']);
+
+                // 1. Verificar stock actual (Bloqueamos la fila 'FOR UPDATE' para evitar condiciones de carrera)
+                $query_check = "SELECT stock, name FROM {$products_table} WHERE id = $1 FOR UPDATE";
+                $res_check = pg_query_params($dbconn, $query_check, [$id]);
+                $product_data = pg_fetch_assoc($res_check);
+
+                if (!$product_data) {
+                    pg_query($dbconn, "ROLLBACK");
+                    send_json_response('error', "El producto ID $id no existe.");
+                }
+
+                if ($product_data['stock'] < $qty_to_buy) {
+                    pg_query($dbconn, "ROLLBACK");
+                    send_json_response('error', "Stock insuficiente para: " . $product_data['name']);
+                }
+
+                // 2. Descontar Inventario
+                $query_update = "UPDATE {$products_table} SET stock = stock - $1 WHERE id = $2";
+                if (!pg_query_params($dbconn, $query_update, [$qty_to_buy, $id])) {
+                    pg_query($dbconn, "ROLLBACK");
+                    send_json_response('error', "Error al actualizar DB.");
+                }
+            }
+
+            pg_query($dbconn, "COMMIT"); // Confirmar cambios
+            send_json_response('success', 'Venta realizada. Inventario actualizado.');
             break;
 
+        // --- CRUD ESTÁNDAR (Actualizado con Stock) ---
+        case 'create':
+            if (!$products_table) send_json_response('error', 'Acceso denegado.');
+            // Incluye 'stock'
+            $query = "INSERT INTO {$products_table} (name, description, price, stock, image_url) VALUES ($1, $2, $3, $4, $5)";
+            pg_query_params($dbconn, $query, [$_POST['name'], $_POST['description'], $_POST['price'], $_POST['stock'], $_POST['image_url']]);
+            send_json_response('success', 'Producto creado.');
+            break;
 
+        case 'update':
+            if (!$products_table) send_json_response('error', 'Acceso denegado.');
+            // Incluye 'stock'
+            $query = "UPDATE {$products_table} SET name = $1, description = $2, price = $3, stock = $4, image_url = $5 WHERE id = $6";
+            pg_query_params($dbconn, $query, [$_POST['name'], $_POST['description'], $_POST['price'], $_POST['stock'], $_POST['image_url'], $_POST['id']]);
+            send_json_response('success', 'Producto actualizado.');
+            break;
+
+        case 'delete':
+            if (!$products_table) send_json_response('error', 'Acceso denegado.');
+            pg_query_params($dbconn, "DELETE FROM {$products_table} WHERE id = $1", [$_POST['id']]);
+            send_json_response('success', 'Producto eliminado.');
+            break;
+
+        // --- BÚSQUEDA (Sin cambios mayores, solo agrega stock al select) ---
         case 'search':
-            // Esta acción NO requiere estar logueado, solo busca en ambas tablas.
-            $query = $_POST['query'];
-            $search_term = '%' . $query . '%';
-            
-            // (SIN CAMBIOS) El 'search' sigue buscando en ambas tablas.
+            $term = '%' . $_POST['query'] . '%';
             $sql = "
-                (SELECT id, name, description, price, image_url, 'tienda' as _source_db 
-                 FROM products 
-                 WHERE name ILIKE $1)
-                
+                (SELECT id, name, price, stock, 'tienda' as _source_db FROM products WHERE name ILIKE $1)
                 UNION ALL
-                
-                (SELECT id, name, description, price, image_url, 'tienda_sucursal_b' as _source_db 
-                 FROM products_sucursal_b
-                 WHERE name ILIKE $1)
-                
+                (SELECT id, name, price, stock, 'tienda_sucursal_b' as _source_db FROM products_sucursal_b WHERE name ILIKE $1)
                 ORDER BY name ASC
             ";
-
-            pg_prepare($dbconn, "search_all_nodes", $sql);
-            $result = pg_execute($dbconn, "search_all_nodes", [$search_term]);
-            
+            $result = pg_query_params($dbconn, $sql, [$term]);
             if (pg_num_rows($result) > 0) {
-                $products = pg_fetch_all($result);
-                send_json_response('success', 'Productos encontrados.', $products);
+                send_json_response('success', 'Encontrado', pg_fetch_all($result));
             } else {
-                send_json_response('error', 'No se encontraron productos que coincidan.');
+                send_json_response('error', 'No encontrado.');
             }
             break;
 
@@ -119,7 +116,8 @@ try {
     }
 
 } catch (Exception $e) {
-    send_json_response('error', 'Error en la consulta: ' . $e->getMessage());
+    if ($action === 'checkout') pg_query($dbconn, "ROLLBACK");
+    send_json_response('error', 'Error Servidor: ' . $e->getMessage());
 } finally {
     pg_close($dbconn);
 }

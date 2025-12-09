@@ -389,38 +389,52 @@ grid-template-columns: repeat(auto-fit, minmax(200px, 250px));
 
 /* === (NUEVO) Estilos del Modal (Ventana Flotante) === */
 
+/* === CORRECCIÓN VISUAL DEL MODAL === */
+
 .modal-backdrop {
-    position: fixed; /* Ocupa toda la pantalla */
+    /* Estado inicial: Oculto */
+    display: none; 
+    
+    /* Posicionamiento fijo para cubrir toda la pantalla */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); /* Fondo oscuro semitransparente */
-    z-index: 1000;
-    display: none; /* Oculto por defecto */
+    
+    /* Fondo oscuro semi-transparente (CRUCIAL para verlo) */
+    background-color: rgba(0, 0, 0, 0.7) !important; 
+    
+    /* Z-index altísimo para que esté encima de TODO */
+    z-index: 9998 !important; 
+    
+    /* Alineación del contenido (la cajita blanca) al centro */
     justify-content: center;
     align-items: center;
-    opacity: 0; /* Para animación */
-    transition: opacity 0.3s ease;
-}
-
-.modal-backdrop.visible {
-    opacity: 1;
-}
-
-.modal-content {
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    max-width: 700px; /* Ancho máximo */
-    overflow: hidden; /* Para que la imagen no rompa el border-radius */
-    position: relative;
     
-    /* Animación de entrada */
-    transform: scale(0.9);
-    opacity: 0;
-    transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); /* Efecto "rebote" */
+    /* Aseguramos que sea totalmente opaco */
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* El contenido (la tarjeta blanca del carrito) */
+.modal-content {
+    background-color: #ffffff !important; /* Blanco puro */
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 5px 30px rgba(0,0,0,0.5);
+    position: relative;
+    z-index: 9999 !important; /* Más alto que el backdrop */
+    
+    /* Asegurar que el texto se vea */
+    color: #333;
+}
+
+/* Botón flotante del carrito (para que no quede tapado si el modal falla) */
+.cart-float-btn {
+    z-index: 2000;
 }
 
 .modal-content.visible {
@@ -615,4 +629,109 @@ grid-template-columns: repeat(auto-fit, minmax(200px, 250px));
 
 .source-tienda_sucursal_b {
     background-color: #28a745; /* Verde para la sucursal B */
+}
+
+/* === ESTILOS CARRITO DE COMPRAS === */
+
+/* Botón Flotante (FAB) */
+.cart-float-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #ff9800;
+    color: white;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    cursor: pointer;
+    transition: transform 0.2s;
+    z-index: 2000;
+}
+.cart-float-btn:hover { transform: scale(1.1); }
+
+/* Contador rojo */
+.cart-float-btn #cart-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #dc3545;
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 20px;
+    border: 2px solid #fff;
+}
+
+/* Botón Agregar al Carrito (en la tarjeta) */
+.btn-cart-add {
+    width: 90%;
+    margin: 0 auto 15px auto;
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.btn-cart-add:hover { background-color: #218838; }
+.btn-cart-add:disabled { background-color: #ccc; cursor: not-allowed; }
+
+/* Estilo para Stock agotado */
+.product-card-admin.out-of-stock {
+    opacity: 0.6;
+    background: #f0f0f0;
+}
+
+/* Tabla del Carrito */
+.cart-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+.cart-table th, .cart-table td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
+.cart-table th { background: #f8f9fa; }
+
+/* Botones +/- en el modal */
+.btn-qty {
+    background: #e9ecef;
+    border: 1px solid #ccc;
+    padding: 2px 8px;
+    margin: 0 5px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+.cart-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 2px solid #eee;
+    padding-top: 15px;
+}
+
+/* Asegura que el fondo del modal esté oculto y no bloquee clics */
+.modal-backdrop {
+    display: none; /* IMPORTANTE: Oculto por defecto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+/* El botón flotante debe estar POR ENCIMA de todo */
+.cart-float-btn {
+    /* ... tus estilos anteriores ... */
+    z-index: 2000; /* Asegura que siempre se pueda clickear */
+}
+
+/* Asegura que los botones dentro del grid no sean enormes */
+.product-card-admin button {
+    cursor: pointer;
+    z-index: 10;
+    position: relative;
 }
